@@ -60,6 +60,17 @@ export default function Figly({ initial }: { initial: Initial }) {
   const [toast, setToast] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [boxW, setBoxW] = useState(0);
+
+  // Track the output box width so the art can shrink to fit on phones.
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => setBoxW(entry.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // Load the selected font; re-render once it is ready.
   useEffect(() => {
@@ -88,6 +99,9 @@ export default function Figly({ initial }: { initial: Initial }) {
   const lines = art ? art.split("\n") : [];
   const cols = lines.reduce((m, l) => Math.max(m, l.length), 0);
   const bytes = art ? new Blob([art]).size : 0;
+  // On narrow screens, cap the font size so the whole art is visible (JetBrains Mono is 0.6em wide).
+  const fit = boxW > 0 && boxW < 640 && cols > 0 ? Math.max(5, Math.floor((boxW - 32) / (cols * 0.6))) : Infinity;
+  const fontSize = Math.min(scale, fit);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -256,6 +270,7 @@ export default function Figly({ initial }: { initial: Initial }) {
           </div>
 
           <div
+            ref={boxRef}
             className={`flex min-h-[260px] overflow-x-auto border-2 border-stage-line p-4 xl:min-h-[320px] ${
               light ? "bg-[#fcf9f8]" : "bg-stage-deep"
             }`}
@@ -267,7 +282,7 @@ export default function Figly({ initial }: { initial: Initial }) {
                 className={`w-max shrink-0 font-mono font-bold whitespace-pre select-all ${alignClass} ${
                   light ? "text-ink" : "text-coral"
                 }`}
-                style={{ fontSize: scale, lineHeight: 1.15 }}
+                style={{ fontSize, lineHeight: 1 }}
               >
                 {art}
               </pre>
@@ -314,7 +329,7 @@ export default function Figly({ initial }: { initial: Initial }) {
                   max={22}
                   value={scale}
                   onChange={(e) => setScale(Number(e.target.value))}
-                  className="mt-1 h-2 w-full cursor-pointer accent-coral"
+                  className="mt-1 h-6 w-full cursor-pointer accent-coral"
                 />
               </div>
             </div>
@@ -331,7 +346,7 @@ export default function Figly({ initial }: { initial: Initial }) {
                   max={140}
                   value={width}
                   onChange={(e) => setWidth(Number(e.target.value))}
-                  className="mt-1 h-2 w-full cursor-pointer accent-coral"
+                  className="mt-1 h-6 w-full cursor-pointer accent-coral"
                 />
               </div>
             </div>
@@ -360,7 +375,7 @@ export default function Figly({ initial }: { initial: Initial }) {
               <select
                 value={frame}
                 onChange={(e) => setFrame(e.target.value as Frame)}
-                className="cursor-pointer rounded-lg border-[1.5px] border-ink bg-card px-2 py-0.5 text-xs font-bold text-ink normal-case"
+                className="cursor-pointer rounded-lg border-[1.5px] border-ink bg-card px-2 py-1 text-xs font-bold text-ink normal-case"
               >
                 {FRAMES.map((f) => (
                   <option key={f.value} value={f.value}>

@@ -19,7 +19,7 @@ export default function FontLibrary({
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState<Category | "All">("All");
   const [sort, setSort] = useState<Sort>("curated");
-  const [, setTick] = useState(0);
+  const [loadedCount, setLoadedCount] = useState(0);
   const previewText = useDeferredValue(text.trim().slice(0, 6) || "Figly");
 
   // Load every curated font in the background, one at a time, so previews fill in.
@@ -32,7 +32,7 @@ export default function FontLibrary({
         } catch {
           /* skip a font that fails to load */
         }
-        if (alive) setTick((t) => t + 1);
+        if (alive) setLoadedCount((n) => n + 1);
       }
     })();
     return () => {
@@ -53,7 +53,9 @@ export default function FontLibrary({
     if (sort === "az") list.sort((a, b) => a.name.localeCompare(b.name));
     if (sort === "lines") list.sort((a, b) => (a.lines || 99) - (b.lines || 99));
     return list;
-  }, [query, cat, sort, previewText]);
+    // loadedCount changes each time a font finishes loading, so previews fill in
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, cat, sort, previewText, loadedCount]);
 
   return (
     <section id="fonts" aria-labelledby="fonts-title" className="flex flex-col gap-4">
@@ -96,7 +98,7 @@ export default function FontLibrary({
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as Sort)}
-              className="cursor-pointer rounded-lg border border-ink bg-muted px-2 py-0.5"
+              className="cursor-pointer rounded-lg border border-ink bg-muted px-2 py-1"
             >
               <option value="curated">Curated</option>
               <option value="az">A to Z</option>
@@ -154,7 +156,7 @@ export default function FontLibrary({
                     e.stopPropagation();
                     onSelect(f.name);
                   }}
-                  className={`shrink-0 cursor-pointer rounded-lg border-[1.5px] border-ink px-2.5 py-0.5 text-xs font-bold ${
+                  className={`shrink-0 cursor-pointer rounded-lg border-[1.5px] border-ink px-3 py-1.5 text-xs font-bold ${
                     active ? "bg-coral shadow-hard-sm" : "bg-muted hover:bg-coral"
                   }`}
                 >
