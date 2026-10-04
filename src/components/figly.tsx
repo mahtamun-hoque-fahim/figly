@@ -96,6 +96,11 @@ export default function Figly({ initial }: { initial: Initial }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [display, font, width, frame, tick],
   );
+  const naturalCols = useMemo(() => {
+    const a = renderArt(display, font, 1000);
+    return a ? a.split("\n").reduce((m, l) => Math.max(m, l.length), 0) : 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [display, font, tick]);
   const lines = art ? art.split("\n") : [];
   const cols = lines.reduce((m, l) => Math.max(m, l.length), 0);
   const bytes = art ? new Blob([art]).size : 0;
@@ -341,6 +346,7 @@ export default function Figly({ initial }: { initial: Initial }) {
                 </label>
                 <input
                   id="width"
+                  aria-describedby="wrap-hint"
                   type="range"
                   min={40}
                   max={140}
@@ -348,6 +354,13 @@ export default function Figly({ initial }: { initial: Initial }) {
                   onChange={(e) => setWidth(Number(e.target.value))}
                   className="mt-1 h-6 w-full cursor-pointer accent-coral"
                 />
+                <span id="wrap-hint" className="text-[10px] font-semibold text-plum normal-case">
+                  {!naturalCols
+                    ? "Long text wraps onto new lines"
+                    : naturalCols > width
+                      ? `Wrapping now: art is ${naturalCols} cols wide`
+                      : `Fits: art is ${naturalCols} cols, wraps below that`}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-2 rounded-xl border-2 border-ink bg-muted px-2.5 py-1.5 shadow-hard-sm">
