@@ -51,6 +51,7 @@ export default function Figly({ initial }: { initial: Initial }) {
   const [text, setText] = useState(initial.text);
   const [font, setFont] = useState(initial.font);
   const [width, setWidth] = useState(initial.width);
+  const [wrap, setWrap] = useState(initial.wrap);
   const [scale, setScale] = useState(initial.scale);
   const [align, setAlign] = useState<Align>(initial.align);
   const [frame, setFrame] = useState<Frame>(initial.frame);
@@ -85,16 +86,16 @@ export default function Figly({ initial }: { initial: Initial }) {
 
   // Keep the address bar in sync so the URL is always shareable.
   useEffect(() => {
-    const q = buildQuery({ text, font, width, scale, align, frame, caseMode });
+    const q = buildQuery({ text, font, width, wrap, scale, align, frame, caseMode });
     window.history.replaceState(null, "", `?${q}`);
-  }, [text, font, width, scale, align, frame, caseMode]);
+  }, [text, font, width, wrap, scale, align, frame, caseMode]);
 
   const display = caseText(text, caseMode);
   const art = useMemo(
-    () => frameArt(renderArt(display, font, width), frame),
+    () => frameArt(renderArt(display, font, wrap ? width : 1000), frame),
     // tick changes when a font finishes loading
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [display, font, width, frame, tick],
+    [display, font, width, wrap, frame, tick],
   );
   const naturalCols = useMemo(() => {
     const a = renderArt(display, font, 1000);
@@ -342,26 +343,48 @@ export default function Figly({ initial }: { initial: Initial }) {
               <MoveHorizontal className="size-4 shrink-0" strokeWidth={2.5} aria-hidden />
               <div className="flex min-w-0 flex-1 flex-col">
                 <label htmlFor="width" className="flex justify-between text-[11px] font-bold uppercase">
-                  Wrap at <span className="text-plum normal-case">{width} cols</span>
+                  Wrap at <span className="text-plum normal-case">{wrap ? `${width} cols` : "off"}</span>
                 </label>
                 <input
                   id="width"
                   aria-describedby="wrap-hint"
+                  disabled={!wrap}
                   type="range"
                   min={40}
                   max={140}
                   value={width}
                   onChange={(e) => setWidth(Number(e.target.value))}
-                  className="mt-1 h-6 w-full cursor-pointer accent-coral"
+                  className="mt-1 h-6 w-full cursor-pointer accent-coral disabled:cursor-not-allowed disabled:opacity-40"
                 />
                 <span id="wrap-hint" className="text-[10px] font-semibold text-plum normal-case">
                   {!naturalCols
-                    ? "Long text wraps onto new lines"
-                    : naturalCols > width
+                    ? wrap
+                      ? "Long text wraps onto new lines"
+                      : "Wrap is off: always one line"
+                    : !wrap
+                      ? `Wrap off: one line, ${naturalCols} cols wide`
+                      : naturalCols > width
                       ? `Wrapping now: art is ${naturalCols} cols wide`
                       : `Fits: art is ${naturalCols} cols, wraps below that`}
                 </span>
               </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={wrap}
+                aria-label="Wrap long text"
+                onClick={() => setWrap((v) => !v)}
+                className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-ink shadow-hard-sm transition-colors duration-150 ${
+                  wrap ? "bg-coral" : "bg-muted-strong"
+                }`}
+              >
+                <span
+                  aria-hidden
+                  className={`absolute top-0.5 size-4 rounded-full border-2 border-ink bg-card transition-all duration-150 ${
+                    wrap ? "left-[calc(100%-1.25rem)]" : "left-0.5"
+                  }`}
+                />
+              </button>
             </div>
             <div className="flex items-center gap-2 rounded-xl border-2 border-ink bg-muted px-2.5 py-1.5 shadow-hard-sm">
               <span className="text-[11px] font-bold text-plum uppercase">Align</span>

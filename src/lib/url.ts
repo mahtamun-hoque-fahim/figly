@@ -7,6 +7,7 @@ export type Initial = {
   text: string;
   font: string;
   width: number;
+  wrap: boolean;
   scale: number;
   align: Align;
   frame: Frame;
@@ -39,6 +40,7 @@ export function parseInitial(sp: Params): Initial {
     text: (one(sp.t) ?? "BIG DREAMS").slice(0, MAX_CHARS),
     font: FONTS.some((f) => f.name === font) ? (font as string) : DEFAULT_FONT,
     width: num(one(sp.w), 40, 140, 80),
+    wrap: one(sp.wr) !== "0",
     scale: num(one(sp.s), 10, 22, 14),
     align: pick(one(sp.a), ALIGNS, "center"),
     frame: pick(one(sp.fr), FRAMES, "none"),
@@ -51,6 +53,7 @@ export function buildQuery(s: Initial) {
   if (s.text) p.set("t", s.text);
   p.set("f", s.font);
   p.set("w", String(s.width));
+  if (!s.wrap) p.set("wr", "0");
   p.set("s", String(s.scale));
   p.set("a", s.align);
   if (s.frame !== "none") p.set("fr", s.frame);
