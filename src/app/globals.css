@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #faf7ee;
+  --color-ink: #18181b;
+  --color-card: #ffffff;
+  --color-muted: #f6f3f2;
+  --color-muted-strong: #eae7e7;
+  --color-coral: #ff5a5f;
+  --color-coral-soft: #ffdad8;
+  --color-plum: #5f5982;
+  --color-lavender: #d7cffe;
+  --color-lavender-soft: #e5deff;
+  --color-sun: #ffe16b;
+  --color-stage: #18152e;
+  --color-stage-deep: #120f24;
+  --color-stage-line: #312b54;
+  --color-stage-text: #a89fd1;
+
+  --font-display: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+
+  --shadow-hard-sm: 2px 2px 0 #18181b;
+  --shadow-hard: 4px 4px 0 #18181b;
+  --shadow-hard-lg: 6px 6px 0 #18181b;
+  --shadow-plum: 4px 4px 0 #5f5982;
+}
+
+@layer base {
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-plum);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply border-[2.5px] border-ink bg-card p-4 shadow-hard;
+  }
+  .btn {
+    @apply inline-flex cursor-pointer items-center gap-1.5 rounded-xl border-2 border-ink bg-card px-3.5 py-1.5 text-xs font-bold text-ink shadow-hard-sm transition-[transform,box-shadow,background-color] duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-hard active:translate-x-0.5 active:translate-y-0.5 active:shadow-none;
+  }
+  .btn-coral {
+    @apply bg-coral;
+  }
+  .chip {
+    @apply cursor-pointer rounded-full border-2 border-ink bg-card px-2.5 py-1 text-[11px] font-bold shadow-hard-sm transition-[transform,box-shadow,background-color] duration-150 ease-out hover:bg-lavender-soft active:translate-x-0.5 active:translate-y-0.5 active:shadow-none;
+  }
+  .stage-btn {
+    @apply inline-flex cursor-pointer items-center gap-1 rounded-lg border-[1.5px] border-[#443c78] bg-[#252047] px-2.5 py-1 text-xs font-bold text-white transition-colors hover:bg-[#342d62];
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
