@@ -30,7 +30,7 @@ export default async function Page({ searchParams }: PageProps<"/">) {
             </a>
           </nav>
           <a
-            href="https://github.com/mahtamun-hoque-fahim/figletive"
+            href="https://github.com/mahtamun-hoque-fahim/figly"
             target="_blank"
             rel="noopener noreferrer"
             className="btn !text-sm"

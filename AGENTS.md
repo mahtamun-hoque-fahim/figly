@@ -1,4 +1,4 @@
-# Figly (figletive)
+# Figly (figly)
 
 Turn text into copyable figlet ASCII art and try fonts live. Next.js 16 App Router, TypeScript, Tailwind v4, no backend.
 
