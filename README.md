@@ -1,5 +1,9 @@
 # Figly
 
+![Version](https://img.shields.io/github/v/release/mahtamun-hoque-fahim/figly?style=flat-square&color=ff5a5f)
+![License](https://img.shields.io/github/license/mahtamun-hoque-fahim/figly?style=flat-square)
+![Stars](https://img.shields.io/github/stars/mahtamun-hoque-fahim/figly?style=flat-square)
+
 Make your words ridiculously big. Type text, pick a figlet font, copy the ASCII art.
 
 - Live preview of your text in 41 curated figlet fonts (fonts load on demand)
@@ -18,3 +22,7 @@ Next.js 16 (App Router, Turbopack), TypeScript, Tailwind v4, figlet, lucide-reac
 npm install
 npm run dev
 ```
+
+## License
+
+MIT. See [LICENSE](LICENSE).
